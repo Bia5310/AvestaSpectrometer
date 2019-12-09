@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -109,20 +110,35 @@ namespace AvestaSpectrometr
                 MessageBox.Show("Avesta not inited");
                 return;
             }
+            
+            UsbCCD.CCD_SetParameter(0, UsbCCD.PRM_EXPTIME, 4000f);
+
+            int pixels = ExtendParams.nNumPixelsH*1;//ExtendParams.nNumPixelsH * ExtendParams.nNumPixelsV * ExtendParams.nNumReadOuts;
+            int cb = pixels * sizeof(uint);
+            IntPtr pData = Marshal.AllocHGlobal(cb);
 
             bool res = UsbCCD.CCD_InitMeasuring(0);
-            //res = UsbCCD.CCD_InitMeasuringCallBack(0, callBackDataReadyHandler);
-            //listBox1.Items.Add(res);
-            
-            int pixels = ExtendParams.nNumPixelsH * ExtendParams.nNumPixelsV * ExtendParams.nNumReadOuts;
-            int cb = pixels * sizeof(uint);
-            IntPtr pData = Marshal.AllocHGlobal(pixels);
+            UsbCCD.CCD_StartWaitMeasuring(0);
 
+
+            int[] data = new int[pixels];
+            byte[] bData = new byte[cb];
             UsbCCD.CCD_GetData(0, pData);
-            int[] data = new int[cb];
 
             Marshal.Copy(pData, data, 0, data.Length);
+            //Marshal.Copy(pData, bData, 0, bData.Length);
+
             Marshal.FreeHGlobal(pData);
+            
+
+            using (var sw = new StreamWriter("data.txt", false))
+            {
+                for(int i = 0; i < data.Length; i++)
+                {
+                    sw.WriteLine(data[i]);
+                }
+                sw.Close();
+            }
 
             chart1.Series[0].Points.Clear();
             for (int i = 0; i < data.Length; i++)
@@ -136,6 +152,21 @@ namespace AvestaSpectrometr
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             UsbCCD.CCD_DoneMeasuring(0);
+        }
+
+        private void Button4_Click(object sender, EventArgs e)
+        {
+            listBox1.Items.Add(UsbCCD.CCDUSB_SetPIN0(0, true)); ;
+            listBox1.Items.Add(UsbCCD.CCDUSB_SetPIN0(0, false)); ;
+            listBox1.Items.Add(UsbCCD.CCDUSB_SetPIN3(true)); ;
+            listBox1.Items.Add(UsbCCD.CCDUSB_SetPIN3(false)); ;
+            listBox1.Items.Add(UsbCCD.CCDUSB_SetPIN4(true)); ;
+            listBox1.Items.Add(UsbCCD.CCDUSB_SetPIN4(false)); ;
+        }
+
+        private void Button5_Click(object sender, EventArgs e)
+        {
+            //UsbCCD.CCDUSB_MemoryFileRead(0, "memfile.txt"); //Slow!
         }
     }
 }

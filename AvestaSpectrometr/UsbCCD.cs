@@ -234,6 +234,30 @@ namespace AvestaSpectrometr
         [DllImport(dllname, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi, EntryPoint = "CCDUSB_SynchPIN")]
         public static extern bool CCDUSB_SynchPIN();
 
+        [DllImport(dllname, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi, EntryPoint = "CCDUSB_MemoryWrite")]
+        public static extern bool CCDUSB_MemoryWrite(int ID, int aStartAddr, IntPtr aBuffShort, int BuffSize);
+
+        [DllImport(dllname, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi, EntryPoint = "CCDUSB_MemoryRead")]
+        public static extern bool CCDUSB_MemoryRead(int ID, int aStartAddr, IntPtr aBuffShort, int BuffSize);
+
+        [DllImport(dllname, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi, EntryPoint = "CCDUSB_MemoryFileWrite")]
+        public static extern bool CCDUSB_MemoryFileWrite(int ID, string FileName);
+
+        [DllImport(dllname, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi, EntryPoint = "CCDUSB_MemoryFileRead")]
+        public static extern bool CCDUSB_MemoryFileRead(int ID, string FileName);
+
+
+        [DllImport(dllname, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi, EntryPoint = "SetWordUSBExt")]
+        public static extern bool SetWordUSBExt(int ID, byte bRequest, short wValue, short wIndex);
+
+        [DllImport(dllname, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi, EntryPoint = "CCDDCOM_DisconectDCOM")]
+        public static extern bool CCDDCOM_DisconectDCOM(int ID);
+
+        [DllImport(dllname, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi, EntryPoint = "CCDDCOM_SetDCOMRemoteName")]
+        public static extern bool CCDDCOM_SetDCOMRemoteName(int ID, string RemoteName);
+
+        [DllImport(dllname, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi, EntryPoint = "SHUTTERSOLARLS_Set_")]
+        public static extern bool SHUTTERSOLARLS_Set_(int ID);
 
 
         [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
